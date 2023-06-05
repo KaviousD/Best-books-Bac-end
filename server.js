@@ -3,9 +3,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-// const bookSchema = require("./componets/books");
+const bookSchema = require("./componets/books");
 const { default: mongoose } = require('mongoose');
-// const bookmodel = require('./componets/books');
+const bookmodel = require('./componets/books');
 
 
 const app = express();
@@ -44,14 +44,14 @@ mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
 // Route handler for /books GET request
 app.get('/books', (request, response) => {
   // Retrieve all books from the database
-  // bookmodel.find()
-  //   .then((books) => {
-  //     response.json(books);
-  //   })
-  //   .catch((err) => {
-  //     console.error('Error retrieving books:', err.message);
-  //     response.status(500).json({ error: 'Internal Server Error' });
-  //   });
+  bookmodel.find()
+    .then((books) => {
+      response.json(books);
+    })
+    .catch((err) => {
+      console.error('Error retrieving books:', err.message);
+      response.status(500).json({ error: 'Internal Server Error' });
+    });
   response.send('book request received')
 });
 
