@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 // const bookSchema = require("./componets/books");
-const { default: mongoose } = require('mongoose');
+const mongoose = require('mongoose');
 // const bookmodel = require('./componets/books');
 
 
@@ -13,46 +13,61 @@ app.use(cors());
 
 const PORT = process.env.PORT || 3001;
 
-//connect to MongoDB
-mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
-  .then(() => {
-    console.log('connected to MongoDB');
-  })
-  .catch((err) => {
-    console.log(err.message)
-  })
+let bookmodel = undefined
+async function Seed() {
 
-//defining the book schema
+    await mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
+    .then(()=>{console.log("Successfully connected")})
+
+    const bookSchema = new mongoose.Schema({
+        title: String,
+        description: String,
+        status: String,
+        genre: String,
+    })
+
+    bookmodel = mongoose.model("book", bookSchema)
 
 
-// Test book 
-// const book = new bookSchema({
-//   title: 'Sample',
-//   author: 'Jhon burrow',
-//   status: 'ongoing',
+    const booksToInsert = [
+        {
+            title: 'book 1',
+            author: 'author 1',
+            genre: 'genre 1',
+            status: 'ongoing',
+        },
+        {
+            title: 'book 2',
+            author: 'author 2',
+            genre: 'genre 2',
+            status: 'ongoing',
+        },
+        {
+            title: 'book 3',
+            author: 'author 3',
+            genre: 'genre 3',
+            status: 'ongoing',
+        },
+    ];
 
-// })
+    // insert method to insertbooks to database
 
-// book.save()
-//   .then(() => {
-//     console.log('Sample book saved to the database');
-//   })
-//   .catch((err) => {
-//     console.error('Error saving sample book:', err.message);
-//   });
+    await bookmodel.insertMany(booksToInsert)
+        .then(() => {
+            console.log('Books have been uploded')
+        })
+        .catch(() => {
+            console.error('Error inserting za Books')
+        });
+
+}
+Seed()
 
 // Route handler for /books GET request
-app.get('/books', (request, response) => {
+app.get('/books', async (request, response) => {
   // Retrieve all books from the database
-  // bookmodel.find()
-  //   .then((books) => {
-  //     response.json(books);
-  //   })
-  //   .catch((err) => {
-  //     console.error('Error retrieving books:', err.message);
-  //     response.status(500).json({ error: 'Internal Server Error' });
-  //   });
-  response.send('book request received')
+  let allBooks = await bookmodel.find()
+  response.send(allBooks)
 });
 
 app.get('/test', (request, response) => {
