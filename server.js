@@ -89,11 +89,54 @@ app.post('/books', async (request, response) => {
         .save()
         .then(() => {
             response.status(201).json({ message: 'book created sucess' });
-        }).catch((error) => {
+        })
+        .catch((error) => {
             console.error('Error creating book:', error);
             response.status(500).json({ message: ' Failed to create the book' });
         });
 });
+
+// Creating route for /books PUT req.
+// app.put('/books/:id', async (request, response) => {
+//     const bookId = request.params.id; // prams means the prams = /book
+//     const { title, description, status, genre } = request.body;
+
+//     await bookmodel
+//         .findByIdAndUpdate(
+//             bookId,
+//             { title, description, status, genre },
+//             { new: true }
+//         )
+//         .then((UpdatedBook) => {
+//             if (UpdatedBook) {
+//                 response.status(200).json({ message: 'Book deleted successfully' });
+//             } else {
+//                 response.status(404).json({ mesage: 'Book not found' });
+//             }
+//         })
+//         .catch((error) => {
+//             console.error('Error updating the book', error);
+//             response.status(500).json({ message: 'Failed to update the book' });
+//         });
+// });
+
+ // route handeler or /books delete request
+app.delete('/books/:id', async (request, response) => {
+    const bookId = request.params.id;
+
+    await bookmodel
+    .findByIdAndRemove(bookId)
+    .then(() => {
+        response.status(200).json({message: 'book deleted sucessfully'});
+    })
+    .catch((error) => {
+        console.error('Error deleting the book:', error);
+        response.status(500).json({message: 'Failed to delete the book'});
+    });
+});
+
+
+
 
 
 app.get('/test', (request, response) => {
