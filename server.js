@@ -10,14 +10,16 @@ const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
+//Ray question do i add the render link her aswell to get the thing to display
 
 let bookmodel = undefined
 async function Seed() {
 
     await mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
-    .then(()=>{console.log("Successfully connected")})
+        .then(() => { console.log("Successfully connected") })
 
     const bookSchema = new mongoose.Schema({
         title: String,
@@ -65,14 +67,38 @@ Seed()
 
 // Route handler for /books GET request
 app.get('/books', async (request, response) => {
-  // Retrieve all books from the database
-  let allBooks = await bookmodel.find()
-  response.send(allBooks)
+    // Retrieve all books from the database
+    let allBooks = await bookmodel.find()
+    response.send(allBooks)
 });
+
+// Route handeler for /books Post request
+app.post('/books', async (request, response) => {
+    // Details for book
+    const { title, description, status, genre } = request.body;
+
+    // creating new book from info above
+    const newBook = new bookmodel({
+        title,
+        description,
+        status,
+        genre,
+    });
+
+    await newBook
+        .save()
+        .then(() => {
+            response.status(201).json({ message: 'book created sucess' });
+        }).catch((error) => {
+            console.error('Error creating book:', error);
+            response.status(500).json({ message: ' Failed to create the book' });
+        });
+});
+
 
 app.get('/test', (request, response) => {
 
-  response.send('test request received')
+    response.send('test request received')
 
 })
 
