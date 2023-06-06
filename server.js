@@ -96,29 +96,29 @@ app.post('/books', async (request, response) => {
         });
 });
 
-// Creating route for /books PUT req.
-// app.put('/books/:id', async (request, response) => {
-//     const bookId = request.params.id; // prams means the prams = /book
-//     const { title, description, status, genre } = request.body;
+//Creating route for /books PUT req.
+app.put('/books/:id', async (request, response) => {
+    const bookId = request.params.id; // prams means the prams = /book
+    const { title, description, status, genre } = request.body;
 
-//     await bookmodel
-//         .findByIdAndUpdate(
-//             bookId,
-//             { title, description, status, genre },
-//             { new: true }
-//         )
-//         .then((UpdatedBook) => {
-//             if (UpdatedBook) {
-//                 response.status(200).json({ message: 'Book deleted successfully' });
-//             } else {
-//                 response.status(404).json({ mesage: 'Book not found' });
-//             }
-//         })
-//         .catch((error) => {
-//             console.error('Error updating the book', error);
-//             response.status(500).json({ message: 'Failed to update the book' });
-//         });
-// });
+    await bookmodel
+        .findByIdAndUpdate(
+            bookId,
+            { title, description, status, genre },
+            { new: true }
+        )
+        .then((UpdatedBook) => {
+            if (UpdatedBook) {
+                response.status(200).json({ message: 'Book deleted successfully' });
+            } else {
+                response.status(404).json({ mesage: 'Book not found' });
+            }
+        })
+        .catch((error) => {
+            console.error('Error updating the book', error);
+            response.status(500).json({ message: 'Failed to update the book' });
+        });
+});
 
  // route handeler or /books delete request
 app.delete('/books/:id', async (request, response) => {
