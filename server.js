@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 // const bookSchema = require('./componets/books');
 const mongoose = require('mongoose');
-const axios = require('axios');
+// const axios = require('axios');
 const verifyUser = require('./componets/verifyUser');
 
 const app = express();
@@ -65,16 +65,24 @@ async function Seed() {
         .catch((error) => {
             console.error('Error inserting books:', error);
         });
+
 }
 
 Seed();
+
+app.get('/', (request, response) => {
+    response.send("The ew")
+})
+
 
 // Route handler for /books GET request
 app.get('/books/:email', async (request, response) => {
     const userEmail = request.params.email;
 
     try {
+        await mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
         const books = await bookmodel.find({ email: userEmail });
+        mongoose.disconect
         response.send(books);
     } catch (error) {
         console.error('Error retrieving books:', error);
@@ -91,11 +99,13 @@ app.post('/books', async (request, response) => {
         description,
         status,
         genre,
-        email, 
+        email,
     });
 
     try {
+        mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
         await newBook.save();
+        mongoose.disconnect
         response.status(201).json({ message: 'Book created successfully' });
     } catch (error) {
         console.error('Error creating book:', error);
@@ -108,12 +118,13 @@ app.post('/books', async (request, response) => {
 app.put('/books/:id', async (request, response) => {
     const bookId = request.params.id;
     const { title, description, status, genre } = request.body;
-
+    await mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
     await bookmodel.findByIdAndUpdate(
         bookId,
         { title, description, status, genre },
         { new: true }
     )
+    mongoose.disconnect
         .then((updatedBook) => {
             if (updatedBook) {
                 response.status(200).json({ message: 'Book updated successfully' });
@@ -130,11 +141,12 @@ app.put('/books/:id', async (request, response) => {
 // Route handler for /books DELETE request
 app.delete('/books/:id', async (request, response) => {
     const bookId = request.params.id;
-
+    await mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
     await bookmodel.findByIdAndRemove(bookId)
         .then(() => {
             response.status(200).json({ message: 'Book deleted successfully' });
         })
+    mongoose.disconnect
         .catch((error) => {
             console.error('Error deleting the book:', error);
             response.status(500).json({ message: 'Failed to delete the book' });
