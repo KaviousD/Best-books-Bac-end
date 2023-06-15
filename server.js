@@ -3,7 +3,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bookSchema = require('./componets/books');
+// const bookSchema = require('./componets/books');
 const mongoose = require('mongoose');
 const axios = require('axios');
 const verifyUser = require('./componets/verifyUser');
@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3001;
 async function Seed() {
     await mongoose.connect(process.env.DATABASE_CONNECTION_STRING)
         .then(() => {
-            console.log("Successfully connected");
+            console.log('Successfully connected');
         })
         .catch((error) => {
             console.error('Error connecting to the database:', error);
